@@ -30,6 +30,9 @@ deepspeed src/training/train.py \
     --model_id $MODEL_NAME \
     --data_path /path/to/your/training/data.json \
     --image_folder /path/to/your/image/folder \
+    --eval_data_path /path/to/your/eval/data.json \
+    --evaluation_strategy "steps" \
+    --eval_steps 200 \
     --remove_unused_columns False \
     --freeze_vision_tower True \
     --freeze_llm True \

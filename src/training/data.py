@@ -343,8 +343,16 @@ def make_supervised_data_module(model_id, processor, data_args):
     sft_dataset = SupervisedDataset(
         data_path=data_args.data_path, processor=processor, data_args=data_args, model_id=model_id
     )
+
+    # Create the evaluation dataset if provided
+    eval_dataset = None
+    if hasattr(data_args, "eval_data_path") and data_args.eval_data_path:
+        eval_dataset = SupervisedDataset(
+            data_path=data_args.eval_data_path, processor=processor, data_args=data_args, model_id=model_id
+        )
+    
     data_collator = DataCollatorForSupervisedDataset(pad_token_id=processor.tokenizer.pad_token_id)
 
     return dict(train_dataset=sft_dataset,
-                eval_dataset=None,
+                eval_dataset=eval_dataset,
                 data_collator=data_collator)
