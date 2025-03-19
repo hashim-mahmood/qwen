@@ -8,11 +8,11 @@ MODEL_NAME="Qwen/Qwen2.5-VL-3B-Instruct"
 
 export PYTHONPATH=src:$PYTHONPATH
 
-GLOBAL_BATCH_SIZE=128
-BATCH_PER_DEVICE=4
+GLOBAL_BATCH_SIZE=1024
+BATCH_PER_DEVICE=32
 NUM_DEVICES=8
 GRAD_ACCUM_STEPS=$((GLOBAL_BATCH_SIZE / (BATCH_PER_DEVICE * NUM_DEVICES)))
-PER_DEVICE_EVAL_BATCH_SIZE=32
+PER_DEVICE_EVAL_BATCH_SIZE=64
 
 # If you want to tune the `embed_token` with LoRA, You need to tune `lm_head` together
 # You should freeze the the merger also, becuase the merger is included in the vision_tower.
@@ -29,11 +29,11 @@ deepspeed src/training/train.py \
     --num_lora_modules -1 \
     --deepspeed scripts/zero3.json \
     --model_id $MODEL_NAME \
-    --data_path /workspace/training_data/final_data/train.json \
-    --image_folder /workspace/training_data/final_data/all_images \
-    --eval_data_path /workspace/training_data/final_data/val.json \
+    --data_path /workspace/training_data/train.json \
+    --image_folder /workspace/training_data/all_images \
+    --eval_data_path /workspace/training_data/val.json \
     --evaluation_strategy "steps" \
-    --eval_steps 200 \
+    --eval_steps 1 \
     --remove_unused_columns False \
     --freeze_vision_tower True \
     --freeze_llm False \
@@ -41,7 +41,7 @@ deepspeed src/training/train.py \
     --bf16 True \
     --fp16 False \
     --disable_flash_attn2 False \
-    --output_dir output/lora_slim_vlm_training_1 \
+    --output_dir /workspace/model_output/lora_slim_vlm_training_1 \
     --num_train_epochs 10 \
     --per_device_train_batch_size $BATCH_PER_DEVICE \
     --per_device_eval_batch_size $PER_DEVICE_EVAL_BATCH_SIZE \
@@ -58,6 +58,6 @@ deepspeed src/training/train.py \
     --report_to tensorboard \
     --lazy_preprocess True \
     --save_strategy "steps" \
-    --save_steps 200 \
-    --save_total_limit 20 \
+    --save_steps 1 \
+    --save_total_limit 30 \
     --dataloader_num_workers 4
