@@ -29,9 +29,9 @@ deepspeed src/training/train.py \
     --num_lora_modules -1 \
     --deepspeed scripts/zero3.json \
     --model_id $MODEL_NAME \
-    --data_path /workspace/training_data/train.json \
-    --image_folder /workspace/training_data/all_images \
-    --eval_data_path /workspace/training_data/val.json \
+    --data_path /workspace/train.json \
+    --image_folder /workspace/all_images \
+    --eval_data_path /workspace/val.json \
     --evaluation_strategy "steps" \
     --eval_steps 1 \
     --remove_unused_columns False \
